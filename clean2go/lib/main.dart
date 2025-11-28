@@ -1,9 +1,7 @@
-import 'package:clean2go/models/cleaner.dart';
 import 'package:clean2go/provider/cleaners_list_page.dart';
-import 'package:clean2go/provider/cleaners_provider.dart';
+import 'package:clean2go/provider/cleaning_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'supabase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'provider/auth_provider.dart';
