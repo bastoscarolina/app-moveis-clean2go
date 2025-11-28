@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'supabase_options.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:template_supabase/auth_provider.dart';
+import 'provider/auth_provider.dart';
+
+
+
 
 // Change to true to enable authentication
 // with Google Sign In
 const authenticationEnabled = false;
+
 
 // Sample supbase_options.dart file:
 //
@@ -17,7 +21,9 @@ const authenticationEnabled = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   await Function.apply(Supabase.initialize, [], supabaseOptions);
+
 
   runApp(
     const ProviderScope(
@@ -28,8 +34,10 @@ void main() async {
   );
 }
 
+
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,19 +45,22 @@ class MainPage extends ConsumerWidget {
   }
 }
 
+
 class AuthenticationWrapper extends ConsumerWidget {
   const AuthenticationWrapper({super.key});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authStateAsync = ref.watch(authStateProvider);
+
 
     return authStateAsync.when(
       data: (AuthState state) {
         return state.session == null ? const SignInPage() : const MainPage();
       },
       loading: () =>
-          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (error, __) {
         return Scaffold(body: Center(child: Text('Error: $error')));
       },
@@ -57,8 +68,10 @@ class AuthenticationWrapper extends ConsumerWidget {
   }
 }
 
+
 class SignInPage extends ConsumerWidget {
   const SignInPage({super.key});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,3 +86,6 @@ class SignInPage extends ConsumerWidget {
     );
   }
 }
+
+
+
