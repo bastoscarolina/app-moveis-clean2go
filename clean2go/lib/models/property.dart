@@ -28,16 +28,16 @@ class Property extends Equatable {
 
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: json['id'] as String,
-      nome: json['nome'] as String,
-      logradouro: json['logradouro'] as String,
-      cidade: json['cidade'] as String,
-      cep: json['cep'] as String,
+      id: _parseString(json['id']) ,
+      nome: _parseString(json['nome']) ,
+      logradouro: _parseString(json['logradouro']) ,
+      cidade: _parseString(json['cidade']) ,
+      cep: _parseString(json['cep']) ,
       numero: _parseNumero(json['numero']),
-      estado: json['estado'] as String,
-      situacao: json['situacao'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      estado: _parseString(json['estado']) ,
+      situacao: _parseString(json['situacao']) ,
+      createdAt: _parseDate(json['created_at']),
+      updatedAt: _parseDate(json['updated_at']),
     );
   }
   static int _parseNumero(dynamic value) {
@@ -46,7 +46,29 @@ class Property extends Equatable {
   if (value is String) return int.tryParse(value) ?? 0;
   return 0;
 }
+  static String _parseString(dynamic value) {
+    if (value == null) return '';
+    return value.toString();
+  }
 
+  static DateTime _parseDate(dynamic value) {
+  if (value == null) {
+    return DateTime.now();
+  }
+
+  if (value is DateTime) return value;
+
+  final str = value.toString();
+
+  try {
+    return DateTime.parse(str);
+  } catch (_) {
+    // fallback para formato do Postgres
+    return DateTime.parse(
+      str.replaceFirst(' ', 'T'),
+    );
+  }
+}
 
   Map<String, dynamic> toJson() {
     return {
