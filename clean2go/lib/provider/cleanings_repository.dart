@@ -63,6 +63,7 @@ class CleaningsRepository {
           .insert({
             'property': input.property,
             'date': input.date.toIso8601String(),
+            'status': input.status,
             'cleaner': input.cleaner,
             'created_at': now,
             'updated_at': now,
@@ -87,6 +88,7 @@ class CleaningsRepository {
           .update({
             'property': input.property,
             'date': input.date.toIso8601String(),
+            'status':input.status,
             'cleaner': input.cleaner,
             'updated_at': DateTime.now().toIso8601String(),
           })
@@ -117,14 +119,16 @@ class CleaningsRepository {
 
 // Input Model
 class CleaningInput {
-  final String property;
+  final int property;
   final DateTime date;
   final String cleaner;
+  final String status;
 
   CleaningInput({
     required this.property,
     required this.date,
     required this.cleaner,
+    required this.status
   });
 
   // Converção
@@ -133,12 +137,13 @@ class CleaningInput {
       property: cleaning.property,
       date: cleaning.date,
       cleaner: cleaning.cleaner,
+      status: cleaning.status
     );
   }
 
   // Validação 
   String? validate() {
-    if (property.trim().isEmpty) return 'Imóvel é obrigatório!';
+    if (property == null || property <= 0) return 'ID do imóvel é obrigatório!';
     if (cleaner.trim().isEmpty) return 'Diarista é obrigatório!';
     return null;
   }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/property.dart';
 import '../provider/properties_provider.dart';
+import 'cleanings_repository.dart';
+import 'package:uuid/uuid.dart';
 
 class PropertiesListPage extends ConsumerWidget {
   const PropertiesListPage({super.key});
@@ -27,7 +29,7 @@ class PropertiesListPage extends ConsumerWidget {
       body: propertiesAsync.when(
         data: (data) => data.isEmpty 
             ? const Center(child: Text("Nenhum imóvel cadastrado.")) 
-            : _buildListView(data),
+            : _buildListView(context, ref, data),
         error: (error, stackTrace) => Center(child: Text('Erro: $error')),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
@@ -40,7 +42,8 @@ class PropertiesListPage extends ConsumerWidget {
     );
   }
 
-  ListView _buildListView(List<Property> list) {
+  ListView _buildListView(BuildContext context,
+  WidgetRef ref,List<Property> list) {
     return ListView.builder(
       itemCount: list.length,
       itemBuilder: (context, index) {
@@ -60,14 +63,49 @@ class PropertiesListPage extends ConsumerWidget {
                 Text('${property.logradouro} - ${property.cidade}/${property.estado}'),
               ],
             ),
-            trailing: IconButton(
-              icon: const Icon(Icons.info_outline, color: Color.fromARGB(255, 3, 86, 103)),
-              onPressed: () {
-                _showPropertyDetails(context, property);
-                // Exemplo de deleção rápida (idealmente, colocar confirmação)
-                // ref.read(propertiesControllerProvider.notifier).deleteProperty(property.id);
-              },
+            trailing: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.info_outline, color: Color.fromARGB(255, 3, 86, 103)),
+                  onPressed: () {
+                    _showPropertyDetails(context, property);
+                    // Exemplo de deleção rápida (idealmente, colocar confirmação)
+                    // ref.read(propertiesControllerProvider.notifier).deleteProperty(property.id);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.cleaning_services),
+                  tooltip: 'Agendar limpeza',
+                  onPressed: ()  async {
+                      try {
+                        final uuid = Uuid();
+
+                        final String id = uuid.v4();
+                        final input = CleaningInput(
+                          property: property.id,
+                          date: DateTime.now(),
+                          cleaner: id, status: 'agendada',
+                        );
+
+                        await ref
+                            .read(cleaningsRepositoryProvider)
+                            .create(input);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Limpeza agendada com sucesso!'),
+                            ),
+                          );
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro: $e')),
+                          );
+                        }
+                  },
+                ),
+              ],
             ),
+            
           ),
         );
       },

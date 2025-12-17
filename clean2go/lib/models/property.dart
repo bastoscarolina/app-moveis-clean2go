@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
 class Property extends Equatable {
-  final String id;
+  final int id;
   final String nome;
   final String logradouro;
   final String cep;
@@ -28,7 +28,7 @@ class Property extends Equatable {
 
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: _parseString(json['id']) ,
+      id: _parseNumero(json['id']) ,
       nome: _parseString(json['nome']) ,
       logradouro: _parseString(json['logradouro']) ,
       cidade: _parseString(json['cidade']) ,
@@ -45,7 +45,7 @@ class Property extends Equatable {
   if (value is int) return value;
   if (value is String) return int.tryParse(value) ?? 0;
   return 0;
-}
+  }
   static String _parseString(dynamic value) {
     if (value == null) return '';
     return value.toString();
@@ -86,7 +86,7 @@ class Property extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, nome, logradouro, cidade, estado, createdAt, updatedAt];
+  List<Object?> get props => [id, nome, logradouro, cidade, cep,estado, numero, situacao,createdAt, updatedAt];
 }
 
 // Input Model para Forms

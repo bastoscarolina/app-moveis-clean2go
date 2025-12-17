@@ -36,7 +36,7 @@ class CleaningListPage extends ConsumerWidget {
       itemCount: list.length,
       itemBuilder:
           (context, index) =>
-              ListTile(title: Text(list[index].id ?? '')),
+              ListTile(title: Text(list[index].id.toString() ?? '')),
     );
   }
 }
