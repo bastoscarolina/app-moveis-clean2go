@@ -1,4 +1,3 @@
-import 'package:clean2go/models/cleaner.dart';
 import 'package:clean2go/models/cleaning.dart';
 import 'package:clean2go/provider/cleanings_provider.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +33,9 @@ class CleaningListPage extends ConsumerWidget {
   ListView _buildListView(List<Cleaning> list) {
     return ListView.builder(
       itemCount: list.length,
-      itemBuilder:
-          (context, index) =>
-              ListTile(title: Text(list[index].id.toString() ?? '')),
+      itemBuilder: (context, index) => ListTile(
+        title: Text(list[index].id.toString()),
+      )
     );
   }
 }

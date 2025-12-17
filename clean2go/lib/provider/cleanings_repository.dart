@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -143,7 +142,8 @@ class CleaningInput {
 
   // Validação 
   String? validate() {
-    if (property == null || property <= 0) return 'ID do imóvel é obrigatório!';
+    // CORRIGIDO: Removida a verificação 'property == null' pois int não pode ser null
+    if (property <= 0) return 'ID do imóvel é obrigatório!';
     if (cleaner.trim().isEmpty) return 'Diarista é obrigatório!';
     return null;
   }

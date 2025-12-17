@@ -30,12 +30,13 @@ class CleanersListPage extends ConsumerWidget {
         ),));
   }
 
-  ListView _buildListView(List<Cleaner> list) {
+   ListView _buildListView(List<Cleaner> list) {
     return ListView.builder(
       itemCount: list.length,
-      itemBuilder:
-          (context, index) =>
-              ListTile(title: Text(list[index].nome ?? '')),
+      itemBuilder: (context, index) => ListTile(
+        // REMOVIDO o "?? ''" pois a variável não é nula
+        title: Text(list[index].nome), 
+      )
     );
   }
 }
