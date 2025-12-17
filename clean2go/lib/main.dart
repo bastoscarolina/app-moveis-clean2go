@@ -1,5 +1,6 @@
 import 'package:clean2go/provider/cleaners_list_page.dart';
 import 'package:clean2go/provider/cleaning_list_page.dart';
+import 'package:clean2go/provider/properties_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'supabase_options.dart';
@@ -30,7 +31,7 @@ void main() async {
   runApp(
     const ProviderScope(
       child: MaterialApp(
-        home: authenticationEnabled ? AuthenticationWrapper() : CleanersListPage(),
+        home: authenticationEnabled ? AuthenticationWrapper() : PropertiesListPage(),
       ),
     ),
   );
@@ -50,7 +51,7 @@ class AuthenticationWrapper extends ConsumerWidget {
 
     return authStateAsync.when(
       data: (AuthState state) {
-        return state.session == null ? const SignInPage() : const CleanersListPage();
+        return state.session == null ? const SignInPage() : const PropertiesListPage();
       },
       loading: () =>
       const Scaffold(body: Center(child: CircularProgressIndicator())),

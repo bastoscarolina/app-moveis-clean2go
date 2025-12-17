@@ -56,7 +56,7 @@ class PropertiesRepository {
           .from(_tableName)
           .insert({
             'nome': input.nome,
-            'endereco': input.endereco,
+            'endereco': input.logradouro,
             'cidade': input.cidade,
             'estado': input.estado,
             'created_at': now,
@@ -78,7 +78,7 @@ class PropertiesRepository {
           .from(_tableName)
           .update({
             'nome': input.nome,
-            'endereco': input.endereco,
+            'endereco': input.logradouro,
             'cidade': input.cidade,
             'estado': input.estado,
             'updated_at': DateTime.now().toIso8601String(),

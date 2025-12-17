@@ -45,19 +45,84 @@ class PropertiesListPage extends ConsumerWidget {
       itemCount: list.length,
       itemBuilder: (context, index) {
         final property = list[index];
-        return ListTile(
-          leading: const Icon(Icons.home),
-          title: Text(property.nome),
-          subtitle: Text('${property.endereco} - ${property.cidade}/${property.estado}'),
-          trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              // Exemplo de deleção rápida (idealmente, colocar confirmação)
-              // ref.read(propertiesControllerProvider.notifier).deleteProperty(property.id);
-            },
+        return Card(
+          elevation: 4,
+          margin: const EdgeInsets.only(bottom: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.home),
+            title: Text(property.nome),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${property.logradouro} - ${property.cidade}/${property.estado}'),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.info_outline, color: Color.fromARGB(255, 3, 86, 103)),
+              onPressed: () {
+                _showPropertyDetails(context, property);
+                // Exemplo de deleção rápida (idealmente, colocar confirmação)
+                // ref.read(propertiesControllerProvider.notifier).deleteProperty(property.id);
+              },
+            ),
           ),
         );
       },
     );
   }
 }
+void _showPropertyDetails(BuildContext context, Property property) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(property.nome),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _detailItem('Endereço', property.logradouro),
+            _detailItem('Cidade', property.cidade),
+            _detailItem('Estado', property.estado),
+            _detailItem('Status', property.situacao),
+            _detailItem(
+              'Criado em',
+              property.createdAt?.toString() ?? '—',
+            ),
+            _detailItem(
+              'Atualizado em',
+              property.updatedAt?.toString() ?? '—',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      );
+    },
+  );
+}
+Widget _detailItem(String label, String value) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: RichText(
+      text: TextSpan(
+        style: const TextStyle(color: Colors.black),
+        children: [
+          TextSpan(
+            text: '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(text: value),
+        ],
+      ),
+    ),
+  );
+}
+
