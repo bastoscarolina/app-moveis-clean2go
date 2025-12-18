@@ -2,7 +2,7 @@ class Cleaning {
   final int id;
   final int property;
   final DateTime date;
-  final String cleaner;
+  final int cleaner;
   final String status;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -23,7 +23,7 @@ class Cleaning {
       property: _parseNumero(json['property']),
       date: _parseDate(json['date']),
       status: _parseString(json['status']),
-      cleaner: _parseString(json['cleaner']),
+      cleaner: _parseNumero(json['cleaner_new_id']),
       createdAt: _parseDate(json['created_at']),
       updatedAt: _parseDate(json['updated_at']),
     );

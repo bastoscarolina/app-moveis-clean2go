@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 /// Modelo de dados para Cleaner (Diarista)
 /// Usa Equatable para comparação eficiente
 class Cleaner extends Equatable {
-  final String id;
+  final int id;
   final String nome;
   final String telefone;
   final String email;
@@ -24,7 +24,7 @@ class Cleaner extends Equatable {
   /// Cria Cleaner a partir do JSON do Supabase
   factory Cleaner.fromJson(Map<String, dynamic> json) {
     return Cleaner(
-      id: json['id'] as String,
+      id: json['new_id'] as int,
       nome: json['nome'] as String,
       telefone: json['telefone'] as String,
       email: json['email'] as String,
@@ -49,7 +49,7 @@ class Cleaner extends Equatable {
 
   /// Método copyWith para atualizações imutáveis
   Cleaner copyWith({
-    String? id,
+    int? id,
     String? nome,
     String? telefone,
     String? email,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/property.dart';
 import '../provider/properties_provider.dart';
@@ -101,37 +100,8 @@ class PropertiesListPage extends ConsumerWidget {
                 IconButton(
                   icon: const Icon(Icons.cleaning_services, color: Colors.green),
                   tooltip: 'Agendar limpeza',
-                  onPressed: () async {
-                    try {
-                      final uuid = Uuid();
-                      final String id = uuid.v4();
-                      final input = CleaningInput(
-                        property: property.id,
-                        date: DateTime.now(),
-                        cleaner: id,
-                        status: 'agendada',
-                      );
-
-                      await ref.read(cleaningsRepositoryProvider).create(input);
-
-                      // --- CORREÇÃO DO ASYNC GAP ---
-                      // Verifica se a tela ainda está montada antes de usar o context
-                      if (!context.mounted) return;
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Limpeza agendada com sucesso!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
-                    } catch (e) {
-                      // --- CORREÇÃO DO ASYNC GAP ---
-                      if (!context.mounted) return;
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
-                      );
-                    }
+                  onPressed: () {
+                    _openCreateCleaningDialog(context, ref, property);
                   },
                 ),
               ],
@@ -141,6 +111,112 @@ class PropertiesListPage extends ConsumerWidget {
       },
     );
   }
+}
+
+Future<void> _openCreateCleaningDialog(
+  BuildContext context,
+  WidgetRef ref,
+  Property property,
+) async {
+  final cleanerController = TextEditingController();
+  DateTime selectedDate = DateTime.now();
+
+  await showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Agendar limpeza'),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: cleanerController,
+                  decoration: const InputDecoration(
+                    labelText: 'Diarista',
+                    hintText: 'Nome da diarista',
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Text('Data:'),
+                    const SizedBox(width: 12),
+                    TextButton(
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
+                        );
+
+                        if (picked != null) {
+                          setState(() => selectedDate = picked);
+                        }
+                      },
+                      child: Text(
+                        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              try {
+                final input = CleaningInput(
+                  property: property.id,
+                  date: selectedDate,
+                  cleaner: int.parse(cleanerController.text),
+                  status: 'agendada',
+                );
+
+                final error = input.validate();
+                if (error != null) {
+                  throw Exception(error);
+                }
+
+                await ref
+                    .read(cleaningsRepositoryProvider)
+                    .create(input);
+
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Limpeza agendada com sucesso!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(e.toString()),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Agendar'),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 void _showPropertyDetails(BuildContext context, Property property) {

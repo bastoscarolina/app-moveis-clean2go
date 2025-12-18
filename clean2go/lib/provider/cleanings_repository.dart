@@ -63,7 +63,7 @@ class CleaningsRepository {
             'property': input.property,
             'date': input.date.toIso8601String(),
             'status': input.status,
-            'cleaner': input.cleaner,
+            'cleaner_new_id': input.cleaner,
             'created_at': now,
             'updated_at': now,
           })
@@ -120,7 +120,7 @@ class CleaningsRepository {
 class CleaningInput {
   final int property;
   final DateTime date;
-  final String cleaner;
+  final int cleaner;
   final String status;
 
   CleaningInput({
@@ -144,7 +144,7 @@ class CleaningInput {
   String? validate() {
     // CORRIGIDO: Removida a verificação 'property == null' pois int não pode ser null
     if (property <= 0) return 'ID do imóvel é obrigatório!';
-    if (cleaner.trim().isEmpty) return 'Diarista é obrigatório!';
+    if (cleaner <= 0) return 'Diarista é obrigatório!';
     return null;
   }
 }
